@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using Google.Apis.Sheets.v4;
+using System.ComponentModel;
+using System.Text;
 using System.Threading;
 using Telegram;
 using Telegram.Bot;
@@ -7,9 +9,17 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using VTFCAnonBot;
 
 TelegramBotClient botClient;
 
+string googleToken = "";
+string sheetFileName = "";
+GoogleHelper helper;
+string cellName = "";
+string value = "";
+var range = sheetFileName + "!" + cellName + ":" + cellName;
+var values = new List<List<object>> { new List<object> { value } };
 botClient = new TelegramBotClient("5629886428:AAHW9qgRwgR-rmo9kOyxhr5Gdmyk1v7DyWg");
 Dictionary<long, string> chatStates = new Dictionary<long, string>();
 
@@ -43,8 +53,6 @@ async Task Logger(ITelegramBotClient botClient, Update update, CancellationToken
     // Виведення нікнейму користувача та його повідомлення в консоль
     Console.WriteLine($"Нікнейм користувача: {message.From.Username}");
     Console.WriteLine($"Повідомлення: {message.Text}");
-
-    // Ваш код...
 }
 
 async Task OnCallbackQuery(ITelegramBotClient botClient, Update update, CallbackQuery callbackQuery, CancellationToken cancellationToken)
@@ -197,6 +205,14 @@ async Task ErrorMessage(ITelegramBotClient botClient, Exception exception, Cance
     }
 }
 
+async Task SetData(string cellName, string value)
+{
+    var range = sheetFileName + "!" + cellName + ":" + cellName;
+    var values = new List<List<object>> { new List<object> { value } };
+
+    var requesn = SheetsService
+}
+
 
 //async Task Start(ITelegramBotClient botClient, Update update, CancellationToken cancellation)
 //{
@@ -205,5 +221,13 @@ async Task ErrorMessage(ITelegramBotClient botClient, Exception exception, Cance
 //        await botClient.SendTextMessageAsync(update.Message.Chat.Id, "Привіт👋\r\nТи запустив анонімного чат-бота студентської ради ВТФК👨‍💻👩‍🎓\r\nВін створений для вивчення потреб та проблем студентів. Можеш відправити пропозиції, свої думки та скарги на рахунок навчання або організації діяльності нашого коледжу.\r\nПроте не забувай про ПРАВИЛА ПРИ ЗВЕРНЕННІ: \r\n1. Висловлюй свою думку чітко, без помилок😎\r\n2. Не забувай про культру мовлення🙃\r\n3. І пам‘ятай, цей бот орієнтований на серйозну роботу з покращення ТВОГО незабутнього періоду навчання😇\r\n4. Ім‘я вказуєте за бажанням («Без імені»)");
 //    }
 //}
+
+async Task SaveData()
+{
+    helper = new GoogleHelper(googleToken, sheetFileName);
+
+    helper.Start();
+}
+
 
 await StartReceiver();
